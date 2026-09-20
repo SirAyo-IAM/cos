@@ -113,14 +113,30 @@ def bing_rss(query):
     except Exception:return []
 
 def discover():
+    # Search breadth is deliberately profession-agnostic. Each result still has to
+    # pass vacancy, positive-sponsorship, UK-location and licensed-sponsor gates.
     phrases=[
       '"certificate of sponsorship" job UK','"certificate of sponsorship" vacancy UK',
-      '"Skilled Worker sponsorship" jobs UK','"Skilled Worker visa sponsorship" careers UK',
-      '"visa sponsorship available" jobs UK','"sponsorship available" vacancy UK',
-      '"certificate of sponsorship" jobs England','"certificate of sponsorship" jobs Scotland',
-      '"certificate of sponsorship" jobs Wales','"certificate of sponsorship" jobs "Northern Ireland"',
-      '"visa sponsorship" site:jobs.nhs.uk','"certificate of sponsorship" site:jobs.ac.uk',
-      '"skilled worker sponsorship" site:myworkdayjobs.com UK','"visa sponsorship" site:greenhouse.io UK',
+      '"certificate of sponsorship" careers UK','"certificate of sponsorship" "apply now" UK',
+      '"Skilled Worker sponsorship" jobs UK','"Skilled Worker visa sponsorship" jobs UK',
+      '"Skilled Worker visa sponsorship" vacancy UK','"Skilled Worker sponsorship available" UK',
+      '"visa sponsorship available" jobs UK','"visa sponsorship available" vacancy UK',
+      '"visa sponsorship provided" jobs UK','"sponsorship available" "apply now" UK',
+      '"eligible for sponsorship" job UK','"able to sponsor" candidate job UK',
+      '"will sponsor" candidate vacancy UK','"can sponsor" applicant job UK',
+      '"certificate of sponsorship" jobs England','"visa sponsorship available" jobs England',
+      '"certificate of sponsorship" jobs Scotland','"visa sponsorship available" jobs Scotland',
+      '"certificate of sponsorship" jobs Wales','"visa sponsorship available" jobs Wales',
+      '"certificate of sponsorship" jobs "Northern Ireland"','"visa sponsorship available" jobs "Northern Ireland"',
+      '"visa sponsorship" site:jobs.nhs.uk','"certificate of sponsorship" site:jobs.nhs.uk',
+      '"skilled worker sponsorship" site:jobs.nhs.uk','"certificate of sponsorship" site:jobs.ac.uk',
+      '"visa sponsorship" site:jobs.ac.uk','"skilled worker sponsorship" site:jobs.ac.uk',
+      '"visa sponsorship" site:findajob.dwp.gov.uk','"certificate of sponsorship" site:findajob.dwp.gov.uk',
+      '"skilled worker sponsorship" site:myworkdayjobs.com UK','"visa sponsorship" site:myworkdayjobs.com UK',
+      '"visa sponsorship" site:greenhouse.io UK','"visa sponsorship" site:boards.greenhouse.io UK',
+      '"visa sponsorship" site:jobs.lever.co UK','"visa sponsorship" site:smartrecruiters.com UK',
+      '"visa sponsorship" site:careers-page.com UK','"visa sponsorship" site:apply.workable.com UK',
+      '"visa sponsorship" site:ashbyhq.com UK','"visa sponsorship" site:job-boards.eu.greenhouse.io UK',
     ]
     urls=[]; seen=set()
     for q in phrases:
