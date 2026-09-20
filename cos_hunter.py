@@ -31,7 +31,8 @@ POSITIVE=[
 NEGATIVE=[
  r"(?:no|not) (?:visa )?sponsorship", r"sponsorship (?:is )?not available",
  r"(?:cannot|can't|unable to|will not|won't) (?:provide |offer )?(?:visa )?sponsorship",
- r"(?:cannot|can't|unable to) sponsor", r"does not offer sponsorship",
+ r"(?:cannot|can't|unable to) sponsor", r"does not offer sponsorship", r"not accepting applications.{0,120}(?:requiring|need(?:ing)?) (?:skilled worker (?:visa )?)?sponsorship",
+ r"(?:not|no longer) accepting applications.{0,160}sponsorship", r"not accepting.{0,100}skilled worker visa sponsorship",
  r"must (?:already )?have (?:the )?(?:right|permission) to work in (?:the )?uk",
  r"without (?:the need for )?sponsorship"
 ]
@@ -173,6 +174,18 @@ def sponsorship_evidence(text):
             return " ".join(text[a:b].split()),"POSITIVE"
     return None,"NONE"
 
+def looks_like_job_page(url,title,text):
+    """Require vacancy evidence; reject editorial/advice content before sponsor matching."""
+    low=(title+" "+text[:30000]).lower(); path=urlparse(url).path.lower()
+    editorial=(r"/blog/",r"/insights/",r"/guide",r"/article",r"/news/",r"/resources/")
+    if any(re.search(p,path) for p in editorial): return False
+    signals=sum(bool(re.search(p,low,re.I)) for p in [
+      r"\bapply (?:now|today|for|online)\b", r"\bjob (?:description|details|reference)\b",
+      r"\b(?:salary|pay)\b", r"\b(?:hours|contract|employment type)\b",
+      r"\b(?:responsibilities|what you.ll be doing|what we.re looking for|requirements)\b"
+    ])
+    return signals>=2
+
 def looks_uk(location,text):
     hay=(" "+location+" "+text[:12000]+" ").lower()
     return any(x in hay for x in UK_HINTS)
@@ -205,6 +218,9 @@ def self_test():
     assert norm_company("Example UK Limited")=="example"
     assert sponsorship_evidence("Skilled Worker visa sponsorship is available")[0]
     assert sponsorship_evidence("We cannot provide visa sponsorship")[0] is None
+    assert sponsorship_evidence("We are not accepting applications requiring Skilled Worker visa sponsorship at this time.")[0] is None
+    assert not looks_like_job_page("https://example.com/blog/cos-guide","Certificate of Sponsorship Guide","Apply now for advice. Salary thresholds and requirements explained.")
+    assert looks_like_job_page("https://example.com/jobs/123","Care Assistant","Job description. Salary £30,000. Apply now. What we are looking for.")
     assert clean_url("https://x.test/job/1?utm_source=a")=="https://x.test/job/1"
     rows=[{"Organisation Name":"Example Healthcare Limited","Town/City":"Leeds","County":"","Type & Rating":"Worker (A rating)","Route":"Skilled Worker"}]
     assert sponsor_match("Example Healthcare Ltd",rows)[1]==1.0
@@ -220,6 +236,7 @@ def main():
             title,employer,location,text=page_text(url)
             ev,evstat=sponsorship_evidence(text)
             if not ev: status="REJECT"; detail=evstat
+            elif not looks_like_job_page(url,title,text): status="REJECT"; detail="NOT_JOB_PAGE"
             elif not looks_uk(location,text): status="REJECT"; detail="NOT_UK"
             else:
                 employer=employer or infer_employer(title,text,url)
