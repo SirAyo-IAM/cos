@@ -3,7 +3,7 @@ name: Run UK CoS Job Hunter
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 7 * * *"
+    - cron: "30 9 * * *"
       timezone: "Europe/London"
 
 jobs:
