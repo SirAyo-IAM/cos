@@ -34,6 +34,11 @@ NEGATIVE=[
  r"(?:cannot|can't|unable to) sponsor", r"does not offer sponsorship", r"not accepting applications.{0,120}(?:requiring|need(?:ing)?) (?:skilled worker (?:visa )?)?sponsorship",
  r"(?:not|no longer) accepting applications.{0,160}sponsorship", r"not accepting.{0,100}skilled worker visa sponsorship",
  r"must (?:already )?have (?:the )?(?:right|permission) to work in (?:the )?uk",
+ r"(?:must|need to|required to) (?:hold|have) (?:your |their |an? )?(?:own )?right to work in (?:the )?uk",
+ r"(?:you|applicants?|candidates?) must (?:hold|have) (?:your |their |an? )?(?:own )?right to work",
+ r"(?:role|post|position).{0,100}does not meet.{0,120}(?:skilled worker|visa)? ?sponsorship",
+ r"does not meet.{0,100}(?:salary|skill|eligibility|criteria).{0,120}sponsorship",
+ r"(?:not|isn.t|is not) eligible (?:for|to receive).{0,80}sponsorship",
  r"without (?:the need for )?sponsorship"
 ]
 UK_HINTS=("united kingdom"," uk ","england","scotland","wales","northern ireland","london","manchester","birmingham","leeds","glasgow","edinburgh","cardiff","belfast","bristol","liverpool","newcastle","sheffield","nottingham","cambridge","oxford")
@@ -235,6 +240,8 @@ def self_test():
     assert sponsorship_evidence("Skilled Worker visa sponsorship is available")[0]
     assert sponsorship_evidence("We cannot provide visa sponsorship")[0] is None
     assert sponsorship_evidence("We are not accepting applications requiring Skilled Worker visa sponsorship at this time.")[0] is None
+    assert sponsorship_evidence("This role does not meet the salary criteria for skilled worker visa sponsorship. To be eligible you must hold your own right to work in the UK.")[0] is None
+    assert sponsorship_evidence("Applicants must hold their own right to work in the UK; Skilled Worker sponsorship is not available.")[0] is None
     assert not looks_like_job_page("https://example.com/blog/cos-guide","Certificate of Sponsorship Guide","Apply now for advice. Salary thresholds and requirements explained.")
     assert looks_like_job_page("https://example.com/jobs/123","Care Assistant","Job description. Salary £30,000. Apply now. What we are looking for.")
     assert clean_url("https://x.test/job/1?utm_source=a")=="https://x.test/job/1"
