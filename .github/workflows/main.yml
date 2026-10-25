@@ -2,9 +2,8 @@ name: Run UK CoS Job Hunter
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "30 9 * * *"
-      timezone: "Europe/London"
+  # Scheduled runs temporarily paused at owner request.
+  # To resume, restore the schedule block previously set for 09:30 Europe/London.
 
 jobs:
   hunt:
